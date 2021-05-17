@@ -13,16 +13,31 @@ public:
 	bool walkable;
 	FVector worldPosition;
 
+	int gCost;
+	int hCost;
+	int fCost;
+
+	int gridX;
+	int gridY;
+
 	Node()
 	{
 		walkable = false;
 		worldPosition = FVector::ZeroVector;
+		gCost = 0;
+		hCost = 0;
+		fCost = 0;
+		gridX = 0;
+		gridY = 0;
 	}
 
-	Node(bool _walkable, FVector _worldPos)
+	Node(bool _walkable, FVector _worldPos, int _gridX, int _gridY)
 	{
 		walkable = _walkable;
 		worldPosition = _worldPos;
+
+		gridX = _gridX;
+		gridY = _gridY;
 	}
 };
 
@@ -39,9 +54,13 @@ public:
 		FVector2D gridWorldSize {1000, 1000};
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Grid")
 		float nodeRadius = 50.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Test")
+	AActor* player;
 
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	Node NodeFromWorldPoint(FVector worldPosition);
+	TArray<Node> GetNeighbours(Node node);
 
 protected:
 	// Called when the game starts
@@ -55,4 +74,5 @@ private:
 	int gridSizeY = 20;
 
 	void CreateGrid();
+	
 };
