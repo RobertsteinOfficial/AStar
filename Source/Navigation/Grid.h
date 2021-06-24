@@ -10,34 +10,45 @@
 class Node
 {
 public:
+	int nodeID;
 	bool walkable;
 	FVector worldPosition;
 
 	int gCost;
 	int hCost;
-	int fCost;
+	//int fCost;
 
 	int gridX;
 	int gridY;
 
+	Node* parentNode;
+
 	Node()
 	{
+		nodeID = -1;
 		walkable = false;
 		worldPosition = FVector::ZeroVector;
 		gCost = 0;
 		hCost = 0;
-		fCost = 0;
+		//fCost = 0;
 		gridX = 0;
 		gridY = 0;
 	}
 
-	Node(bool _walkable, FVector _worldPos, int _gridX, int _gridY)
+	Node(int _nodeID, bool _walkable, FVector _worldPos, int _gridX, int _gridY)
 	{
+		nodeID = _nodeID;
 		walkable = _walkable;
 		worldPosition = _worldPos;
 
 		gridX = _gridX;
 		gridY = _gridY;
+	}
+
+
+	int FCost()
+	{
+		return gCost + hCost;
 	}
 };
 
@@ -54,8 +65,10 @@ public:
 		FVector2D gridWorldSize {1000, 1000};
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Grid")
 		float nodeRadius = 50.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Test")
-	AActor* player;
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Test")
+	AActor* player;*/
+
+	TArray<Node*> path;
 
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

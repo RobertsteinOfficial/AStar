@@ -31,7 +31,7 @@ void UGrid::BeginPlay()
 
 	if (grid)
 	{
-		Node playerNode = NodeFromWorldPoint(player->GetActorLocation());
+		//Node playerNode = NodeFromWorldPoint(player->GetActorLocation());
 
 
 		for (int i = 0; i < gridSizeX; i++)
@@ -50,10 +50,10 @@ void UGrid::BeginPlay()
 					col = FColor(255, 0, 0);
 				}
 
-				if (playerNode.worldPosition == grid[i][j].worldPosition)
+				/*if (playerNode.worldPosition == grid[i][j].worldPosition)
 				{
 					col = FColor(255, 180, 60);
-				}
+				}*/
 
 				//devo creare un transform apposta, perchè quello indica la location
 				FTransform trans;
@@ -83,7 +83,35 @@ void UGrid::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentT
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	for (int i = 0; i < gridSizeX; i++)
+	{
+		for (int j = 0; j < gridSizeY; j++)
+		{
+			if (path.Num() > 0)
+			{
+				for (size_t n = 0; n < path.Num(); n++)
+				{
+					if (path[i]->nodeID == grid[i][j].nodeID)
+					{
+						FTransform trans;
+						trans.SetLocation(grid[i][j].worldPosition + FVector::UpVector * 20);
+
+						DrawDebugSolidBox
+						(
+							GetWorld(),
+							FBox(FVector(0, 0, 0), FVector(nodeDiameter - 20)),		//parametro min è il centro, max è l'estensione massima
+							FColor(0,0,255),
+							trans,
+							true,
+							0,
+							0
+						);
+					}
+				}
+			}
+
+		}
+	}
 }
 
 void UGrid::CreateGrid()
@@ -91,6 +119,8 @@ void UGrid::CreateGrid()
 
 	FVector worldBottomLeft = GetOwner()->GetActorLocation() - FVector::RightVector * gridWorldSize.X / 2 -
 		FVector::ForwardVector * gridWorldSize.Y / 2;
+
+	int IDCounter = 0;
 
 	for (int i = 0; i < gridSizeX; i++)
 	{
@@ -115,7 +145,8 @@ void UGrid::CreateGrid()
 				FCollisionResponseParams::DefaultResponseParam
 			);
 
-			grid[i][j] = Node(walkable, worldPoint, i, j);
+
+			grid[i][j] = Node(IDCounter++, walkable, worldPoint, i, j);
 		}
 	}
 
